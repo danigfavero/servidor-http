@@ -34,22 +34,26 @@ public class MyServer extends Thread {
     
     private void response(String requestString) throws IOException {
     	resp = new DataOutputStream(client.getOutputStream());
-    	String responseString;
-    	if (requestString.contains("HTTP/1.1")) {
-    		responseString = "HTTP/1.1 200 OK";
-    		resp.writeBytes(responseString);
-    	}	
-    	resp.writeBytes("\r\n\r\n");
-		
-    	if (requestString.contains("/oi")) {
+    	if (requestString.contains("HTTP/1.1") && requestString.contains("/oi")) {
     		oi();
+    	} else {
+    		notFound();
     	}
-    		
 		resp.close();
     }
     
     private void oi() throws IOException {
+    	String responseString = "HTTP/1.1 200 OK";
+		resp.writeBytes(responseString);
+		resp.writeBytes("\r\n\r\n");
     	resp.writeBytes("Oi!\n");
+    }
+    
+    private void notFound() throws IOException {
+    	String responseString = "HTTP/1.1 404 Not Found";
+		resp.writeBytes(responseString);
+		resp.writeBytes("\r\n\r\n");
+    	resp.writeBytes("Não encontrado\n");
     }
 
 	public static void main(String[] args) throws IOException {	
